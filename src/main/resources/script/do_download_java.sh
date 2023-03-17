@@ -23,7 +23,7 @@ cd src/main/resources/script/do_download_java_result
 JAR_TARGET_CLASS=com/example/batchstudy/service/Download.class
 
 #jarファイルの作成
-sleep 5;jar -cvfm Download.jar download.mf $JAR_JAR_TARGET_CLASS
+sleep 5;jar -cvfm Download.jar download.mf $JAR_TARGET_CLASS
 
 #作成したjarファイルを実行
 sleep 5;java -jar Download.jar
