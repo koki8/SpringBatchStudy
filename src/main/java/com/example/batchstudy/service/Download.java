@@ -1,25 +1,17 @@
 package com.example.batchstudy.service;
 
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+@Service
 public class Download {
-
-    public static void main(String[] args) throws IOException {
-
-        // 郵便番号データダウンロード
-        // https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip
-        URL url = new URL("https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip");
-
-        download(url);
-    }
-
-    public static void download(URL url) throws IOException {
+    public void download(URL url) throws IOException {
 
         String path = url.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
         String name = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得

@@ -12,13 +12,18 @@ import java.net.URL;
 @Component
 public class DownloadTasklet implements Tasklet {
 
+    private final Download download;
+
+    public DownloadTasklet(Download download) {
+        this.download = download;
+    }
+
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         // 郵便番号データダウンロード
         // https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip
         URL url = new URL("https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip");
 
-        Download download = new Download();
         download.download(url);
 
         return RepeatStatus.FINISHED;
