@@ -7,8 +7,9 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
-
+/**
+ * downloadをTaskletとして定義
+ */
 @Component
 public class DownloadTasklet implements Tasklet {
 
@@ -18,14 +19,17 @@ public class DownloadTasklet implements Tasklet {
         this.download = download;
     }
 
+    /**
+     * ジョブ/ステップで呼び出されると実行され、戻りに設定したRepeatStatus.FINISHEDかエラーを投げることで終了する
+     *
+     * @param contribution
+     * @param chunkContext
+     * @return
+     * @throws Exception
+     */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        // 郵便番号データダウンロード
-        // https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip
-        URL url = new URL("https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip");
-
-        download.download(url);
-
+        download.doDownload();
         return RepeatStatus.FINISHED;
     }
 }

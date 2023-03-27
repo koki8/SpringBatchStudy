@@ -19,7 +19,11 @@ import org.springframework.context.annotation.Configuration;
 public class BatchTasklet {
 
     private DownloadTasklet downloadTasklet;
+
+    // Jobの作成に使われる
     private JobBuilderFactory jobBuilderFactory;
+
+    // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
     private StepBuilderFactory stepBuilderFactory;
 
     public BatchTasklet(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory){
@@ -28,6 +32,11 @@ public class BatchTasklet {
         this.stepBuilderFactory = stepBuilderFactory;
     }
 
+    /**
+     * downloadTaskletをStepとして登録
+     *
+     * @return
+     */
     @Bean
     public Step step(){
         return stepBuilderFactory.get("step")
@@ -35,7 +44,14 @@ public class BatchTasklet {
                 .build();
     }
 
-    public Job job(Step step) throws Exception {
+    /**
+     * 上記で定義したStepをJobとして登録
+     *
+     *
+     * @param step
+     * @return
+     */
+    public Job job(Step step) {
         return jobBuilderFactory.get("job")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
