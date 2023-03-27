@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
-public class Download {
+public class DownloadService {
 
     private final AppPropertiesConfig appPropertiesConfig;
 
-    public Download(AppPropertiesConfig appPropertiesConfig) {
+    public DownloadService(AppPropertiesConfig appPropertiesConfig) {
         this.appPropertiesConfig = appPropertiesConfig;
     }
 

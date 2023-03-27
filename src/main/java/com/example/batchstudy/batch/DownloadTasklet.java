@@ -1,6 +1,6 @@
 package com.example.batchstudy.batch;
 
-import com.example.batchstudy.service.Download;
+import com.example.batchstudy.service.DownloadService;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DownloadTasklet implements Tasklet {
 
-    private final Download download;
+    private final DownloadService downloadService;
 
-    public DownloadTasklet(Download download) {
-        this.download = download;
+    public DownloadTasklet(DownloadService downloadService) {
+        this.downloadService = downloadService;
     }
 
     /**
@@ -29,7 +29,7 @@ public class DownloadTasklet implements Tasklet {
      */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        download.doDownload();
+        downloadService.doDownload();
         return RepeatStatus.FINISHED;
     }
 }

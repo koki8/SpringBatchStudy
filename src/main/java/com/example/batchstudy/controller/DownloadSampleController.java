@@ -1,6 +1,6 @@
 package com.example.batchstudy.controller;
 
-import com.example.batchstudy.service.Download;
+import com.example.batchstudy.service.DownloadService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,16 +11,16 @@ import java.io.IOException;
 @RequestMapping("/download")
 public class DownloadSampleController {
 
-    final private Download download;
+    final private DownloadService downloadService;
 
-    public DownloadSampleController (Download download) {
-        this.download = download;
+    public DownloadSampleController (DownloadService downloadService) {
+        this.downloadService = downloadService;
     }
 
     @GetMapping
     public String doDownload() {
         try {
-            download.doDownload();
+            downloadService.doDownload();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

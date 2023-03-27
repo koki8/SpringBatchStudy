@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchTasklet {
+public class BatchTaskletConfig {
 
     private DownloadTasklet downloadTasklet;
 
@@ -26,7 +26,7 @@ public class BatchTasklet {
     // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
     private StepBuilderFactory stepBuilderFactory;
 
-    public BatchTasklet(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory){
+    public BatchTaskletConfig(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory){
         this.downloadTasklet = downloadTasklet;
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -51,6 +51,7 @@ public class BatchTasklet {
      * @param step
      * @return
      */
+    @Bean
     public Job job(Step step) {
         return jobBuilderFactory.get("job")
                 .incrementer(new RunIdIncrementer())
