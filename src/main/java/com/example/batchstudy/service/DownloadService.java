@@ -1,6 +1,6 @@
 package com.example.batchstudy.service;
 
-import com.example.batchstudy.config.AppPropertiesConfig;
+import com.example.batchstudy.property.AppProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,10 +14,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @Service
 public class DownloadService {
 
-    private final AppPropertiesConfig appPropertiesConfig;
+    private final AppProperties appProperties;
 
-    public DownloadService(AppPropertiesConfig appPropertiesConfig) {
-        this.appPropertiesConfig = appPropertiesConfig;
+    public DownloadService(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
     /**
@@ -61,8 +61,8 @@ public class DownloadService {
      * @throws IOException
      */
     public void doDownload() throws IOException {
-        URL downloadUrl = appPropertiesConfig.getDownloadUrl();
-        String outputDirectory = appPropertiesConfig.getOutputDirectory();
+        URL downloadUrl = appProperties.getDownloadUrl();
+        String outputDirectory = appProperties.getOutputDirectory();
         download(downloadUrl, outputDirectory);
     }
 }

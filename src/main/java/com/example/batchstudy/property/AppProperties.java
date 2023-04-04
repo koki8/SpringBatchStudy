@@ -1,12 +1,14 @@
-package com.example.batchstudy.config;
+package com.example.batchstudy.property;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
-@Configuration
-public class AppPropertiesConfig {
+@Component
+@ConstructorBinding //セッターの定義が不要になる
+public class AppProperties {
 
     @Value("${downloadURL}")
     private URL downloadUrl;
@@ -18,15 +20,8 @@ public class AppPropertiesConfig {
         return downloadUrl;
     }
 
-    public void setDownloadUrl(URL downloadUrl) {
-        this.downloadUrl = downloadUrl;
-    }
-
     public String getOutputDirectory() {
         return outputDirectory;
     }
 
-    public void setOutputDirectory(String outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
 }
