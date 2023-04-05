@@ -11,7 +11,7 @@ import java.io.IOException;
 @RequestMapping("/download")
 public class DownloadSampleController {
 
-    final private DownloadService downloadService;
+    private final DownloadService downloadService;
 
     public DownloadSampleController (DownloadService downloadService) {
         this.downloadService = downloadService;
@@ -20,7 +20,7 @@ public class DownloadSampleController {
     @GetMapping
     public String doDownload() {
         try {
-            downloadService.doDownload();
+            downloadService.download();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

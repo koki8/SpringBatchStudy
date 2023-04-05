@@ -1,6 +1,6 @@
 package com.example.batchstudy.service;
 
-import com.example.batchstudy.property.AppProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,25 +14,25 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @Service
 public class DownloadService {
 
-    private final AppProperties appProperties;
+    //downloadを行うURLを指定
+    @Value("${downloadURL}")
+    URL downloadURL;
 
-    public DownloadService(AppProperties appProperties) {
-        this.appProperties = appProperties;
-    }
+    //downloadをしたファイルを配置するディレクトリを指定
+    @Value("${outputDirectory}")
+    String outputDirectory;
 
     /**
-     * inputURLのファイルをダウンロードして、outputDirectoryにファイルを出力する
+     * downloadURLのファイルをダウンロードして、outputDirectoryにファイルを出力する
      *
-     * @param inputURL
-     * @param outputDirectory
      * @throws IOException
      */
-    public void download(URL inputURL, String outputDirectory) throws IOException {
+    public void download() throws IOException {
 
         /**
          * 以下2行はURLの末尾からファイル名を取得するための処理
          */
-        String path = inputURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
+        String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
         String name = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
 
         String outputPath = outputDirectory + name;
@@ -50,19 +50,9 @@ public class DownloadService {
          *  StandardCopyOption.REPLACE_EXISTING　を指定した場合は、
          *  すでにファイルが存在していたら上書きされる
          */
-        size = Files.copy(inputURL.openStream(), checkOutputPath, REPLACE_EXISTING);
+        size = Files.copy(downloadURL.openStream(), checkOutputPath, REPLACE_EXISTING);
 
         System.out.println(outputPath + " - " + size + " bytes ");
     }
 
-    /**
-     * AppPropertiesConfigで設定されている内容に基づいて、downloadメソッドを実行
-     *
-     * @throws IOException
-     */
-    public void doDownload() throws IOException {
-        URL downloadUrl = appProperties.getDownloadUrl();
-        String outputDirectory = appProperties.getOutputDirectory();
-        download(downloadUrl, outputDirectory);
-    }
 }

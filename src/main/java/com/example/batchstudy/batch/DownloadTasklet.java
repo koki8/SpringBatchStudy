@@ -29,7 +29,7 @@ public class DownloadTasklet implements Tasklet {
      */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        downloadService.doDownload();
+        downloadService.download();
         return RepeatStatus.FINISHED;
     }
 }
