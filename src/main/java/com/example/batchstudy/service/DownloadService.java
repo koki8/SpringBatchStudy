@@ -42,7 +42,7 @@ public class DownloadService {
             Files.createDirectories(checkOutputPath);
         }
 
-        long size = 0L;
+        long size;
 
         /**
          *  https://docs.oracle.com/javase/jp/8/docs/api/java/nio/file/Files.html

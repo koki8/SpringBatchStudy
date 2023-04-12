@@ -10,12 +10,15 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
 @EnableBatchProcessing
+@ComponentScan("com.example.batchstudy") //JobLauncherTestUtilsの生成に必要
 public class BatchTaskletConfig {
 
     private DownloadTasklet downloadTasklet;
@@ -26,7 +29,7 @@ public class BatchTaskletConfig {
     // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
     private StepBuilderFactory stepBuilderFactory;
 
-    public BatchTaskletConfig(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory){
+    public BatchTaskletConfig(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.downloadTasklet = downloadTasklet;
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -38,7 +41,7 @@ public class BatchTaskletConfig {
      * @return
      */
     @Bean
-    public Step step(){
+    public Step step() {
         return stepBuilderFactory.get("step")
                 .tasklet(downloadTasklet)
                 .build();
@@ -47,12 +50,13 @@ public class BatchTaskletConfig {
     /**
      * 上記で定義したStepをJobとして登録
      *
-     *
      * @param step
      * @return
      */
     @Bean
-    public Job job(Step step) {
+    //https://qiita.com/lukaliao/items/46330ec865662da6d6f3
+    //StepのTestのためには、@QualifierでBeanを強く特定した方がいいらしい
+    public Job job(@Qualifier("step") Step step) {
         return jobBuilderFactory.get("job")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
@@ -61,10 +65,8 @@ public class BatchTaskletConfig {
     }
 
     @Bean
-    public JobExecutionListener listener(){
+    public JobExecutionListener listener() {
         return new JobListener();
     }
-
-
 
 }
