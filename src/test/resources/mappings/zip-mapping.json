@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/download",
+    "headers": {
+      "Accept": {
+        "matches": "text/.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"bar\":\"buzz\"}",
+    "headers": {
+      "Content-Type": "application/zip",
+      "Content-Disposition": "attachment;filename=\"test.zip\""
+    }
+  }
+}
