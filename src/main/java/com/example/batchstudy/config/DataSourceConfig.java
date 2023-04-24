@@ -14,7 +14,7 @@ public class DataSourceConfig {
     public DataSource metaDataSource() {
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("/org/springframework/batch/core/schema-h2.sql")
+//                .addScript("/org/springframework/batch/core/schema-h2.sql")
                 .build();
     }
 

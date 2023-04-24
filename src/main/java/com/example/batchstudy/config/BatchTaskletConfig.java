@@ -10,10 +10,14 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URL;
 
 
 @Configuration
@@ -21,19 +25,35 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.example.batchstudy") //JobLauncherTestUtilsの生成に必要
 public class BatchTaskletConfig {
 
-    private DownloadTasklet downloadTasklet;
-
     // Jobの作成に使われる
     private JobBuilderFactory jobBuilderFactory;
 
     // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
     private StepBuilderFactory stepBuilderFactory;
 
-    public BatchTaskletConfig(DownloadTasklet downloadTasklet, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        this.downloadTasklet = downloadTasklet;
+    //ダウンロード元のURLを指定
+    @Value("${downloadURL}")
+    URL downloadURL;
+
+    //ダウンロードしたファイルを配置するディレクトリを指定
+    @Value("${outputDirectory}")
+    String outputDirectory;
+
+    public BatchTaskletConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
     }
+
+    /**
+     * DownloadTaskletをBean生成
+     *
+     * @return
+     */
+    @Bean
+    public Tasklet downloadTasklet() {
+        return new DownloadTasklet(downloadURL, outputDirectory);
+    }
+
 
     /**
      * downloadTaskletをStepとして登録
@@ -43,7 +63,7 @@ public class BatchTaskletConfig {
     @Bean
     public Step step() {
         return stepBuilderFactory.get("step")
-                .tasklet(downloadTasklet)
+                .tasklet(downloadTasklet())
                 .build();
     }
 

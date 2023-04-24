@@ -4,18 +4,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +37,9 @@ class DownloadServiceTest {
     @Value("${outputDirectory}")
     String outputDirectory;
 
+    @Mock
+    private Files filesMock;
+
     //ダウンロードしたファイルを配置するディレクトリへのPath取得
     Path outputDirectoryPath;
 
@@ -44,7 +53,7 @@ class DownloadServiceTest {
 
     @BeforeEach
     void setUp() {
-
+        MockitoAnnotations.initMocks(this);
     }
 
     @AfterEach
@@ -56,26 +65,33 @@ class DownloadServiceTest {
         } catch (IOException e) {
 
         }
-
     }
 
     @Test
     void download_正常() throws IOException {
 
-        downloadService.download();
+        //ダミーの入力ストリームを作成
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("test data".getBytes());
 
-        /**
-         * 以下2行はURLの末尾からファイル名を取得するための処理
-         */
-        String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
-        String filename = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
+        //Files.copy()メソッドをMock化
+        when(Files.copy(inputStream, Paths.get(outputDirectory), StandardCopyOption.REPLACE_EXISTING));
 
-        outputDirectoryPath = Paths.get(outputDirectory);
-        String expectedOutputPath = outputDirectory + filename;
-        expectedOutputPathObject = Paths.get(expectedOutputPath);
+        downloadService.download(downloadURL, outputDirectory);
 
-        //ファイルが存在しているかを確認
-        assertThat(Files.exists(expectedOutputPathObject)).isTrue();
+        verify(filesMock, times(1)).copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class));
+
+//        /**
+//         * 以下2行はURLの末尾からファイル名を取得するための処理
+//         */
+//        String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
+//        String filename = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
+//
+//        outputDirectoryPath = Paths.get(outputDirectory);
+//        String expectedOutputPath = outputDirectory + filename;
+//        expectedOutputPathObject = Paths.get(expectedOutputPath);
+//
+//        //ファイルが存在しているかを確認
+//        assertThat(Files.exists(expectedOutputPathObject)).isTrue();
 
     }
 

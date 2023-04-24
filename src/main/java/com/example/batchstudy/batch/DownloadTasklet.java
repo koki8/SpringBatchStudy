@@ -5,18 +5,29 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URL;
 
 /**
  * downloadをTaskletとして定義
  */
-@Component
 public class DownloadTasklet implements Tasklet {
 
-    private final DownloadService downloadService;
+    @Autowired
+    private DownloadService downloadService;
 
-    public DownloadTasklet(DownloadService downloadService) {
-        this.downloadService = downloadService;
+    //ダウンロード元のURLを指定
+    URL downloadURL;
+
+    //ダウンロードしたファイルを配置するディレクトリを指定
+    String outputDirectory;
+
+    public DownloadTasklet(URL downloadurl, String outputDirectory) {
+        this.downloadURL = downloadurl;
+        this.outputDirectory = outputDirectory;
+
     }
 
     /**
@@ -29,7 +40,7 @@ public class DownloadTasklet implements Tasklet {
      */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        downloadService.download();
+        downloadService.download(downloadURL, outputDirectory);
         return RepeatStatus.FINISHED;
     }
 }

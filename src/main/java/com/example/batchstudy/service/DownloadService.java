@@ -1,6 +1,5 @@
 package com.example.batchstudy.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,20 +13,12 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @Service
 public class DownloadService {
 
-    //downloadを行うURLを指定
-    @Value("${downloadURL}")
-    URL downloadURL;
-
-    //downloadをしたファイルを配置するディレクトリを指定
-    @Value("${outputDirectory}")
-    String outputDirectory;
-
     /**
      * downloadURLのファイルをダウンロードして、outputDirectoryにファイルを出力する
      *
      * @throws IOException
      */
-    public void download() throws IOException {
+    public void download(URL downloadURL, String outputDirectory) throws IOException {
 
         /**
          * 以下2行はURLの末尾からファイル名を取得するための処理
