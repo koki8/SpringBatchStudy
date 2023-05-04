@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPattern": "/download",
+    "urlPattern": "/download.zip",
     "headers": {
       "Accept": {
         "matches": "text/.*"

@@ -1,4 +1,5 @@
-#?????????????
-downloadURL: "https://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip"
-#????????????
+#郵政のサイトからzipファイルをダウンロード
+downloadURL: "http://www.post.japanpost.jp/zipcode/dl/oogaki/zip/13tokyo.zip"
+
+#ダウンロードしたファイルの出力先
 outputDirectory: "result/"

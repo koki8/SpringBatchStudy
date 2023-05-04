@@ -1,11 +1,13 @@
 package com.example.batchstudy.service;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,7 +38,7 @@ class DownloadServiceTest {
 
     private DownloadService downloadService;
 
-    //ダウンロード元のURLを指定
+    //ダウンロード元のURLを指定（モックサーバーを指定）
     @Value("${downloadURL}")
     URL downloadURL;
 
@@ -44,68 +46,39 @@ class DownloadServiceTest {
     @Value("${outputDirectory}")
     String outputDirectory;
 
-//    @Mock
-//    private Files filesMock;
-
-    //ダウンロードしたファイルを配置するディレクトリへのPath取得
-    Path outputDirectoryPath;
-
-    //ダウンロードしたファイルまでのPath取得
-    Path expectedOutputPathObject;
-
     @Autowired //なぜか省略できない
     public DownloadServiceTest(DownloadService downloadService) {
         this.downloadService = downloadService;
     }
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8080);
+    //テスト用のwiremockサーバー
+    private WireMockServer mockServer;
 
     @BeforeEach
     void setUp() {
-//        MockitoAnnotations.initMocks(this);
+        //テスト用のwiremockサーバーの起動
+        mockServer = new WireMockServer();
+        mockServer.start();
     }
 
     @AfterEach
     void tearDown() {
-        //テスト用の出力ファイルと出力先ディレクトリ削除
-        try {
-            Files.deleteIfExists(expectedOutputPathObject);
-            Files.deleteIfExists(outputDirectoryPath);
-        } catch (IOException e) {
-
-        }
+        //テスト用のwiremockサーバー
+        mockServer.stop();
     }
 
     @Test
     void download_正常() throws IOException {
 
+        downloadService.download(downloadURL, outputDirectory);
+
         String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
         String name = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
         String outputPath = outputDirectory + name;
-
         Path checkOutputPath = Paths.get(outputPath);
-
-//        //Files.copy()メソッドをMock化
-//        when(Files.copy(downloadURL.openStream(), checkOutputPath, REPLACE_EXISTING)).thenReturn(9L);
-
-        downloadService.download(downloadURL, outputDirectory);
-
-//        verify(filesMock, times(1)).copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class));
-
-//        /**
-//         * 以下2行はURLの末尾からファイル名を取得するための処理
-//         */
-//        String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
-//        String filename = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
-//
-//        outputDirectoryPath = Paths.get(outputDirectory);
-//        String expectedOutputPath = outputDirectory + filename;
-//        expectedOutputPathObject = Paths.get(expectedOutputPath);
-//
-//        //ファイルが存在しているかを確認
-//        assertThat(Files.exists(expectedOutputPathObject)).isTrue();
+        assertThat(Files.exists(checkOutputPath)).isTrue(); //指定したディレクトリ配下にファイルが存在しているかを確認
 
     }
+
 
 }
