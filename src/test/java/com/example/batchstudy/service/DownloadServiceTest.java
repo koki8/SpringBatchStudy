@@ -1,38 +1,22 @@
 package com.example.batchstudy.service;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@RunWith(SpringRunner.class)
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class DownloadServiceTest {
 
@@ -68,7 +52,7 @@ class DownloadServiceTest {
     }
 
     @Test
-    void download_正常() throws IOException {
+    void download_正常系() throws IOException {
 
         downloadService.download(downloadURL, outputDirectory);
 
@@ -80,5 +64,10 @@ class DownloadServiceTest {
 
     }
 
+    @Test
+    void download_異常系() {
+        assertThatThrownBy(() -> downloadService.download(null, outputDirectory))
+                .isInstanceOf(Exception.class);
+    }
 
 }
