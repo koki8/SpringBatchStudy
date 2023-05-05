@@ -1,5 +1,8 @@
 package com.example.batchstudy.config;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobExecution;
@@ -20,24 +23,36 @@ class BatchTaskletConfigTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    //Jobテスト
-    @Test
-    void testJob() throws Exception {
+    //テスト用のwiremockサーバー
+    private WireMockServer mockServer;
 
-        //launchJobでJob全体を実行
-        JobExecution jobExecution = this.jobLauncherTestUtils.launchJob();
-        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
+    @BeforeEach
+    void setUp() {
+        //テスト用のwiremockサーバーの起動
+        mockServer = new WireMockServer();
+        mockServer.start();
+    }
 
+    @AfterEach
+    void tearDown() {
+        //テスト用のwiremockサーバー
+        mockServer.stop();
     }
 
     //Stepテスト
     @Test
     void testStep() {
-
         //launchStepでStep全体を実行
         JobExecution jobExecution = this.jobLauncherTestUtils.launchStep("step");
         assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
+    }
 
+    //Jobテスト
+    @Test
+    void testJob() throws Exception {
+        //launchJobでJob全体を実行
+        JobExecution jobExecution = this.jobLauncherTestUtils.launchJob();
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
     }
 
 }
