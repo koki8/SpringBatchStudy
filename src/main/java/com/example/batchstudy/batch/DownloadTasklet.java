@@ -19,10 +19,14 @@ public class DownloadTasklet implements Tasklet {
     //ダウンロードしたファイルを配置するディレクトリを指定
     String outputDirectory;
 
-    public DownloadTasklet(URL downloadurl, String outputDirectory) {
-        this.downloadURL = downloadurl;
+    DownloadService downloadService;
+
+    public DownloadTasklet(DownloadService downloadService, URL downloadURL, String outputDirectory) {
+        this.downloadService = downloadService;
+        this.downloadURL = downloadURL;
         this.outputDirectory = outputDirectory;
     }
+
 
     /**
      * ジョブ/ステップで呼び出されると実行され、戻りに設定したRepeatStatus.FINISHEDかエラーを投げることで終了する
@@ -34,7 +38,6 @@ public class DownloadTasklet implements Tasklet {
      */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        DownloadService downloadService = new DownloadService();
         downloadService.download(downloadURL, outputDirectory);
         return RepeatStatus.FINISHED;
     }

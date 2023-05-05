@@ -3,6 +3,7 @@ package com.example.batchstudy.config;
 
 import com.example.batchstudy.batch.DownloadTasklet;
 import com.example.batchstudy.listener.JobListener;
+import com.example.batchstudy.service.DownloadService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -11,6 +12,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +41,9 @@ public class BatchTaskletConfig {
     @Value("${outputDirectory}")
     String outputDirectory;
 
+    @Autowired
+    DownloadService downloadService;
+
     public BatchTaskletConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -51,7 +56,7 @@ public class BatchTaskletConfig {
      */
     @Bean
     public Tasklet downloadTasklet() {
-        return new DownloadTasklet(downloadURL, outputDirectory);
+        return new DownloadTasklet(downloadService ,downloadURL, outputDirectory);
     }
 
 
