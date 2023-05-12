@@ -1,7 +1,5 @@
 package com.example.batchstudy.service;
 
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -10,15 +8,25 @@ import java.nio.file.Paths;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@Service
 public class DownloadService {
+
+    //ダウンロード元のURLを指定
+    private URL downloadURL;
+
+    //ダウンロードしたファイルを配置するディレクトリを指定
+    private String outputDirectory;
+
+    public DownloadService(URL downloadURL, String outputDirectory) {
+        this.downloadURL = downloadURL;
+        this.outputDirectory = outputDirectory;
+    }
 
     /**
      * downloadURLのファイルをダウンロードして、outputDirectoryにファイルを出力する
      *
      * @throws IOException
      */
-    public void download(URL downloadURL, String outputDirectory) throws IOException {
+    public void download() throws IOException {
 
         /**
          * 以下2行はURLの末尾からファイル名を取得するための処理

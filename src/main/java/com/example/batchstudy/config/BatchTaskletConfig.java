@@ -33,16 +33,10 @@ public class BatchTaskletConfig {
     // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
     private StepBuilderFactory stepBuilderFactory;
 
-    //ダウンロード元のURLを指定
-    @Value("${downloadURL}")
-    URL downloadURL;
-
-    //ダウンロードしたファイルを配置するディレクトリを指定
-    @Value("${outputDirectory}")
-    String outputDirectory;
-
-    @Autowired
-    DownloadService downloadService;
+    @Bean
+    public DownloadService downloadService(@Value("${downloadURL}")URL downloadURL, @Value("${outputDirectory}")String outputDirectory) {
+        return new DownloadService(downloadURL, outputDirectory);
+    }
 
     public BatchTaskletConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobBuilderFactory = jobBuilderFactory;
@@ -55,8 +49,8 @@ public class BatchTaskletConfig {
      * @return
      */
     @Bean
-    public Tasklet downloadTasklet() {
-        return new DownloadTasklet(downloadService ,downloadURL, outputDirectory);
+    public Tasklet downloadTasklet(DownloadService downloadService) {
+        return new DownloadTasklet(downloadService);
     }
 
 
@@ -66,9 +60,9 @@ public class BatchTaskletConfig {
      * @return
      */
     @Bean
-    public Step step() {
+    public Step step(Tasklet downloadTasklet) {
         return stepBuilderFactory.get("step")
-                .tasklet(downloadTasklet())
+                .tasklet(downloadTasklet)
                 .build();
     }
 

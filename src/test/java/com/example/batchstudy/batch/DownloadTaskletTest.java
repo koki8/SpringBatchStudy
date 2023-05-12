@@ -43,8 +43,8 @@ class DownloadTaskletTest {
 
     @Test
     void execute_正常() throws Exception {
-        doNothing().when(downloadService).download(any(),any());
+        doNothing().when(downloadService).download();
         downloadTasklet.execute(contribution,chunkContext);
-        verify(downloadService).download(any(),any());
+        verify(downloadService).download();
     }
 }

@@ -22,19 +22,6 @@ class DownloadServiceTest {
 
     private DownloadService downloadService;
 
-    //ダウンロード元のURLを指定（モックサーバーを指定）
-    @Value("${downloadURL}")
-    URL downloadURL;
-
-    //ダウンロードしたファイルを配置するディレクトリを指定
-    @Value("${outputDirectory}")
-    String outputDirectory;
-
-    @Autowired //なぜか省略できない
-    public DownloadServiceTest(DownloadService downloadService) {
-        this.downloadService = downloadService;
-    }
-
     //テスト用のwiremockサーバー
     private WireMockServer mockServer;
 
@@ -52,9 +39,9 @@ class DownloadServiceTest {
     }
 
     @Test
-    void download_正常系() throws IOException {
-
-        downloadService.download(downloadURL, outputDirectory);
+    void download_正常系(@Value("${downloadURL}")URL downloadURL, @Value("${outputDirectory}")String outputDirectory) throws IOException {
+        DownloadService downloadService = new DownloadService(downloadURL, outputDirectory);
+        downloadService.download();
 
         String path = downloadURL.getPath(); //URLのpathを取得　例:http://localhost/path　⇨　/path
         String name = path.substring(path.lastIndexOf("/") + 1); //path部の末尾を取得することでzipファイル名取得　
@@ -65,8 +52,9 @@ class DownloadServiceTest {
     }
 
     @Test
-    void download_異常系() {
-        assertThatThrownBy(() -> downloadService.download(null, outputDirectory))
+    void download_異常系(@Value("${outputDirectory}")String outputDirector) {
+        DownloadService downloadService = new DownloadService(null, outputDirector);
+        assertThatThrownBy(() -> downloadService.download())
                 .isInstanceOf(Exception.class);
     }
 

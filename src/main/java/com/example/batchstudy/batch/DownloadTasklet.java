@@ -13,18 +13,10 @@ import java.net.URL;
  */
 public class DownloadTasklet implements Tasklet {
 
-    //ダウンロード元のURLを指定
-    URL downloadURL;
-
-    //ダウンロードしたファイルを配置するディレクトリを指定
-    String outputDirectory;
-
     DownloadService downloadService;
 
-    public DownloadTasklet(DownloadService downloadService, URL downloadURL, String outputDirectory) {
+    public DownloadTasklet(DownloadService downloadService) {
         this.downloadService = downloadService;
-        this.downloadURL = downloadURL;
-        this.outputDirectory = outputDirectory;
     }
 
 
@@ -38,7 +30,7 @@ public class DownloadTasklet implements Tasklet {
      */
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        downloadService.download(downloadURL, outputDirectory);
+        downloadService.download();
         return RepeatStatus.FINISHED;
     }
 }
