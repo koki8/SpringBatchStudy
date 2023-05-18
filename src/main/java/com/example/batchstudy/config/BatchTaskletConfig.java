@@ -8,16 +8,17 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.net.URL;
 
@@ -27,21 +28,11 @@ import java.net.URL;
 @ComponentScan("com.example.batchstudy") //JobLauncherTestUtilsの生成に必要
 public class BatchTaskletConfig {
 
-    // Jobの作成に使われる
-    private JobBuilderFactory jobBuilderFactory;
-
-    // Stepの作成に使われる。StepはJobの中に一つ以上含まれる。
-    private StepBuilderFactory stepBuilderFactory;
-
     @Bean
-    public DownloadService downloadService(@Value("${downloadURL}")URL downloadURL, @Value("${outputDirectory}")String outputDirectory) {
+    public DownloadService downloadService(@Value("${downloadURL}")URL downloadURL, String outputDirectory) {
         return new DownloadService(downloadURL, outputDirectory);
     }
 
-    public BatchTaskletConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-    }
 
     /**
      * DownloadTaskletをBean生成
@@ -60,9 +51,9 @@ public class BatchTaskletConfig {
      * @return
      */
     @Bean
-    public Step step(Tasklet downloadTasklet) {
-        return stepBuilderFactory.get("step")
-                .tasklet(downloadTasklet)
+    public Step step(JobRepository jobRepository, Tasklet downloadTasklet, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("step", jobRepository)
+                .tasklet(downloadTasklet, transactionManager)
                 .build();
     }
 
@@ -75,8 +66,8 @@ public class BatchTaskletConfig {
     @Bean
     //https://qiita.com/lukaliao/items/46330ec865662da6d6f3
     //StepのTestのためには、@QualifierでBeanを強く特定した方がいいらしい
-    public Job job(@Qualifier("step") Step step) {
-        return jobBuilderFactory.get("job")
+    public Job job(JobRepository jobRepository, @Qualifier("step") Step step) {
+        return new JobBuilder("job", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
                 .start(step)
