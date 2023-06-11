@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfig {
-    @Bean
+    @Bean(name = "dataSource")
     public DataSource metaDataSource() {
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
