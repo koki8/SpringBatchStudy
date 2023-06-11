@@ -29,7 +29,7 @@ import java.net.URL;
 public class BatchTaskletConfig {
 
     @Bean
-    public DownloadService downloadService(@Value("${downloadURL}")URL downloadURL, String outputDirectory) {
+    public DownloadService downloadService(@Value("${downloadURL}")URL downloadURL, @Value("${outputDirectory}")String outputDirectory) {
         return new DownloadService(downloadURL, outputDirectory);
     }
 
