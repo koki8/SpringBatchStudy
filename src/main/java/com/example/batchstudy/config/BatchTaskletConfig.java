@@ -24,7 +24,7 @@ import java.net.URL;
 
 
 @Configuration
-@EnableBatchProcessing
+//@EnableBatchProcessing
 @ComponentScan("com.example.batchstudy") //JobLauncherTestUtilsの生成に必要
 public class BatchTaskletConfig {
 
